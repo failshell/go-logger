@@ -18,7 +18,7 @@ jobs:
       - name: Check out failshell/actions
         uses: actions/checkout@v2
         with:
-          repository: failshell/actions
+          repository: failshell/gh-actions
           ref: master
           path: ./.github/workflows
 

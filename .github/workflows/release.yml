@@ -1,0 +1,40 @@
+name: Releasing application
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  create_release:
+    name: Create release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out ${{ github.repository }}
+        uses: actions/checkout@v2
+
+      - name: Check out failshell/actions
+        uses: actions/checkout@v2
+        with:
+          repository: failshell/actions
+          ref: master
+          path: ./.github/workflows
+
+      - name: Set version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "::set-output name=version::${VERSION}"
+        id: get_version
+
+      - name: Create release
+        id: create_release
+        uses: ./.github/workflows/create-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          release_name: v${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: false
